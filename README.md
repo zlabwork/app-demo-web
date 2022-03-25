@@ -12,6 +12,9 @@ npm install
 
 # build
 npm run build
+
+# watch
+npm run watch
 ```
 
 
@@ -19,6 +22,11 @@ npm run build
 ```shell
 # webpack
 npm install --save-dev webpack webpack-cli
+npm install --save-dev style-loader css-loader
+npm install --save-dev file-loader
+npm install --save-dev html-webpack-plugin
+npm install --save-dev clean-webpack-plugin
+npm install --save-dev webpack-dev-server
 
 # lodash
 npm install --save lodash
