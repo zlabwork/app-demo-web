@@ -1,0 +1,24 @@
+# IDE
+.idea
+.vscode
+*.iml
+
+# node
+node_modules
+package-lock.json
+dist
+
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+### Linux ###
+*~
+
+### Windows ###
+Thumbs.db
