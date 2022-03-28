@@ -22,11 +22,13 @@ npm run watch
 ```shell
 # webpack
 npm install --save-dev webpack webpack-cli
-npm install --save-dev style-loader css-loader
-npm install --save-dev file-loader
+npm install --save-dev style-loader css-loader file-loader
+npm install --save-dev sass-loader sass
 npm install --save-dev html-webpack-plugin
 npm install --save-dev clean-webpack-plugin
 npm install --save-dev webpack-dev-server
+npm install --save-dev webpack-merge
+npm install --save-dev mini-css-extract-plugin css-minimizer-webpack-plugin
 
 # lodash
 npm install --save lodash
