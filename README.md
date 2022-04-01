@@ -53,8 +53,9 @@ npm install --save-dev gulp-cli
 
 # cd my-project
 npm init
-npm install --save-dev gulp
-npm install --save-dev gulp-babel @babel/core
+npm install --save-dev gulp gulp-cli
+npm install --save-dev gulp-babel @babel/core @babel/preset-env
+npm install --save-dev del browser-sync gulp-htmlmin gulp-useref gulp-plumber gulp-rename gulp-if gulp-sass sass cssnano gulp-concat gulp-uglify gulp-sourcemaps gulp-babel browserify yargs gulp-postcss autoprefixer
 ```
 
 ## Docs
