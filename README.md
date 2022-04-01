@@ -18,6 +18,14 @@ npm run watch
 ```
 
 
+## ESLint & babel
+```shell
+npm install --save-dev eslint
+npm init @eslint/config
+npm install --save-dev @babel/core @babel/preset-env
+```
+
+
 ## Webpack
 ```shell
 # webpack
@@ -46,9 +54,11 @@ npm install --save-dev gulp-cli
 # cd my-project
 npm init
 npm install --save-dev gulp
+npm install --save-dev gulp-babel @babel/core
 ```
 
 ## Docs
+https://eslint.org/demo  
 https://webpack.js.org  
 https://webpack.docschina.org/guides  
 https://gulpjs.com  
