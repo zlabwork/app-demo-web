@@ -27,12 +27,11 @@ const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 const browserify = require('browserify');
 const {argv} = require('yargs');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
 // 以下两个一起使用，自动处理浏览器兼容问题
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
-// unused
-// const source = require('vinyl-source-stream');
-// const buffer = require('vinyl-buffer');
 
 // Env
 const port = argv.port || 3000;
@@ -75,7 +74,6 @@ function fonts() {
 // ES6
 function scriptES6() {
     var b = browserify({
-        transform: ['babelify'],
         entries: path.src_script + "app.js",
         debug: true
     });
