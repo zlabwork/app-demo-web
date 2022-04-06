@@ -26,6 +26,7 @@ const uglify = require('gulp-uglify'); // 压缩js
 const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 const browserify = require('browserify');
+var tap = require('gulp-tap');
 const {argv} = require('yargs');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
@@ -74,6 +75,7 @@ function fonts() {
 // ES6
 function scriptES6() {
     var b = browserify({
+        transform: ['babelify'],
         entries: path.src_script + "app.js",
         debug: true
     });
@@ -94,8 +96,13 @@ function scriptES6() {
 // 编译
 function script() {
     return src(path.src_script + '**/*.js', {sourcemaps: true})
-        .pipe(plumber())
-        .pipe(babel())
+        .pipe(tap(function (file) {
+            console.log('bundling ' + file.path)
+            file.contents = browserify(file.path, {debug: true})
+                .transform("babelify", {presets: ["@babel/preset-env"]})
+                .bundle();
+        }))
+        .pipe(buffer())
         .pipe(concat("app.js"))
         .pipe(dest(path.tmp + 'scripts', {sourcemaps: true}))
 }
@@ -160,7 +167,7 @@ function compress() {
     return src(path.tmp + 'scripts/*.js')
         .pipe(sourcemaps.init())
         .pipe(plumber())
-        .pipe(gulpif(/\.js$/, uglify({compress: {drop_console: true}})))
+        .pipe(gulpif(/\.js$/, uglify({compress: {drop_console: false}})))
         .pipe(rename({suffix: ".min"}))
         .pipe(sourcemaps.write('.'))
         .pipe(dest(path.dist_assets + 'js'))
