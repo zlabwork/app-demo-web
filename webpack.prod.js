@@ -10,7 +10,7 @@ module.exports = merge(common, {
     plugins: [
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
-            filename: "[name].css",
+            filename: "[name].[chunkhash].css",
             chunkFilename: "[id].css",
             ignoreOrder: false,
         }),
