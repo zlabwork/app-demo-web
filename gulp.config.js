@@ -21,9 +21,9 @@ const gulpConfig = {
             srcPlugins: "./src/plugins",
             node_modules: "./node_modules",
         },
-        dist: ["./dist"],
-        distPages: ["./dist/pages"],
-        distAssets: ["./dist/assets"],
+        dist: "./dist",
+        distPages: "./dist/pages",
+        distAssets: "./dist/assets",
     },
 };
 
