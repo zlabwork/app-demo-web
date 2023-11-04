@@ -31,7 +31,7 @@ const isDev = !isProd && !isTest;
 
 // pages
 function pages() {
-    return src(gulpConfig.config.path.srcPages + '**/*.html')
+    return src(gulpConfig.config.path.srcPages + '/**/*.html')
         .pipe(useref({searchPath: [gulpConfig.config.path.tmp, '.']}))
         //.pipe(gulpif(/\.js$/, uglify({compress: {drop_console: true}})))
         //.pipe(gulpif(/\.css$/, postcss([cssnano({safe: true, autoprefixer: false})])))
@@ -50,15 +50,15 @@ function pages() {
 
 // images
 function images() {
-    return src(gulpConfig.config.path.srcImages + '**/*', {since: lastRun(images)})
+    return src(gulpConfig.config.path.srcImages + '/**/*', {since: lastRun(images)})
         // .pipe($.imagemin())
-        .pipe(dest(gulpConfig.config.distAssets + 'images'));
+        .pipe(dest(gulpConfig.config.dist + '/images'));
 }
 
 // fonts
 function fonts() {
     return src(gulpConfig.config.path.srcFonts + '**/*.{eot,svg,ttf,woff,woff2}')
-        .pipe(dest(gulpConfig.config.distAssets + 'fonts'));
+        .pipe(dest(gulpConfig.config.dist + '/fonts'));
 }
 
 // ES6
@@ -75,11 +75,11 @@ function scriptES6() {
         .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(plumber())
         .pipe(babel())
-        .pipe(dest(gulpConfig.config.distAssets + 'js'))
+        .pipe(dest(gulpConfig.config.dist + '/js'))
         .pipe(rename({suffix: ".min"}))
         .pipe(uglify())
         .pipe(sourcemaps.write('.'))
-        .pipe(dest(gulpConfig.config.distAssets + 'js'));
+        .pipe(dest(gulpConfig.config.dist + '/js'));
 }
 
 // 编译
@@ -124,7 +124,7 @@ async function vendor() {
         .pipe(plumber())
         .pipe(concat("vendor.js"))
         .pipe(rename({suffix: ".min"}))
-        .pipe(dest(gulpConfig.config.distAssets + 'js'))
+        .pipe(dest(gulpConfig.config.dist + '/js'))
 
     // libs
     let assetsList = {
@@ -141,7 +141,7 @@ async function vendor() {
     };
 
     for (var item of assetsList.libs) {
-        await src(item.assets).pipe(dest(gulpConfig.config.distAssets + "libs/" + item.name));
+        await src(item.assets).pipe(dest(gulpConfig.config.dist + "/libs/" + item.name));
     }
 }
 
@@ -151,7 +151,7 @@ function compress() {
         .pipe(plumber())
         .pipe(gulpif(/\.css$/, postcss([cssnano({safe: true, autoprefixer: false})])))
         .pipe(rename({suffix: ".min"}))
-        .pipe(dest(gulpConfig.config.distAssets + 'css'))
+        .pipe(dest(gulpConfig.config.dist + '/css'))
 
     return src(gulpConfig.config.path.tmp + 'scripts/*.js')
         .pipe(sourcemaps.init())
@@ -159,12 +159,12 @@ function compress() {
         .pipe(gulpif(/\.js$/, uglify({compress: {drop_console: false}})))
         .pipe(rename({suffix: ".min"}))
         .pipe(sourcemaps.write('.'))
-        .pipe(dest(gulpConfig.config.distAssets + 'js'))
+        .pipe(dest(gulpConfig.config.dist + '/js'))
 }
 
 // 清理
 function clean() {
-    return del([gulpConfig.config.dist, gulpConfig.config.distAssets, gulpConfig.config.path.tmp])
+    return del([gulpConfig.config.dist, gulpConfig.config.distPages, gulpConfig.config.path.tmp])
 }
 
 // dev server
@@ -216,4 +216,5 @@ exports.script = script;
 exports.style = styles;
 exports.build = build;
 exports.start = develop;
+exports.clean = clean;
 exports.default = develop;
