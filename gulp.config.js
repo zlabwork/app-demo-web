@@ -11,6 +11,7 @@ const gulpConfig = {
             cssSourcemaps: false,
         },
         path: {
+            tmp: '.tmp/',
             src: "./src",
             srcPages: "./src/pages",
             srcFonts: "./src/fonts",
@@ -20,24 +21,13 @@ const gulpConfig = {
             srcPlugins: "./src/plugins",
             node_modules: "./node_modules",
         },
-        dist: ["./dist/assets"],
+        dist: ["./dist"],
+        distPages: ["./dist/pages"],
+        distAssets: ["./dist/assets"],
     },
 };
 
-const pathConfig = {
-    tmp: '.tmp/',
-    src: 'src/',
-    src_page: 'src/pages/',
-    src_style: 'src/styles/',
-    src_script: 'src/scripts/',
-    src_font: 'src/fonts/',
-    src_image: 'src/images/',
-    dist: 'dist/',
-    dist_assets: 'dist/assets/',
-    dist_page: 'dist/pages/',
-}
 
 export {
-    gulpConfig,
-    pathConfig
+    gulpConfig
 };

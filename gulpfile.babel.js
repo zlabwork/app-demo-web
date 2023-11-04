@@ -1,5 +1,5 @@
 import del from "del";
-import {gulpConfig, pathConfig as path} from "./gulp.config.js"
+import {gulpConfig} from "./gulp.config.js"
 
 const {src, dest, watch, series, parallel, lastRun} = require('gulp');
 const browserSync = require('browser-sync').create();
@@ -31,8 +31,8 @@ const isDev = !isProd && !isTest;
 
 // pages
 function pages() {
-    return src(path.src_page + '**/*.html')
-        .pipe(useref({searchPath: [path.tmp, '.']}))
+    return src(gulpConfig.config.path.srcPages + '**/*.html')
+        .pipe(useref({searchPath: [gulpConfig.config.path.tmp, '.']}))
         //.pipe(gulpif(/\.js$/, uglify({compress: {drop_console: true}})))
         //.pipe(gulpif(/\.css$/, postcss([cssnano({safe: true, autoprefixer: false})])))
         .pipe(gulpif(/\.html$/, htmlmin({
@@ -45,27 +45,27 @@ function pages() {
             removeScriptTypeAttributes: true,
             removeStyleLinkTypeAttributes: true
         })))
-        .pipe(dest(path.dist_page));
+        .pipe(dest(gulpConfig.config.distPages));
 }
 
 // images
 function images() {
-    return src(path.src_image + '**/*', {since: lastRun(images)})
+    return src(gulpConfig.config.path.srcImages + '**/*', {since: lastRun(images)})
         // .pipe($.imagemin())
-        .pipe(dest(path.dist_assets + 'images'));
+        .pipe(dest(gulpConfig.config.distAssets + 'images'));
 }
 
 // fonts
 function fonts() {
-    return src(path.src_font + '**/*.{eot,svg,ttf,woff,woff2}')
-        .pipe(dest(path.dist_assets + 'fonts'));
+    return src(gulpConfig.config.path.srcFonts + '**/*.{eot,svg,ttf,woff,woff2}')
+        .pipe(dest(gulpConfig.config.distAssets + 'fonts'));
 }
 
 // ES6
 function scriptES6() {
     var b = browserify({
         transform: ['babelify'],
-        entries: path.src_script + "app.js",
+        entries: gulpConfig.config.path.srcScripts + "app.js",
         debug: true
     });
 
@@ -75,16 +75,16 @@ function scriptES6() {
         .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(plumber())
         .pipe(babel())
-        .pipe(dest(path.dist_assets + 'js'))
+        .pipe(dest(gulpConfig.config.distAssets + 'js'))
         .pipe(rename({suffix: ".min"}))
         .pipe(uglify())
         .pipe(sourcemaps.write('.'))
-        .pipe(dest(path.dist_assets + 'js'));
+        .pipe(dest(gulpConfig.config.distAssets + 'js'));
 }
 
 // 编译
 function script() {
-    return src(path.src_script + '**/*.js', {sourcemaps: true})
+    return src(gulpConfig.config.path.srcScripts + '**/*.js', {sourcemaps: true})
         .pipe(tap(function (file) {
             console.log('bundling ' + file.path)
             file.contents = browserify(file.path, {debug: true})
@@ -93,12 +93,12 @@ function script() {
         }))
         .pipe(buffer())
         .pipe(concat("app.js"))
-        .pipe(dest(path.tmp + 'scripts', {sourcemaps: true}))
+        .pipe(dest(gulpConfig.config.path.tmp + 'scripts', {sourcemaps: true}))
 }
 
 // 编译css
 function styles() {
-    return src(path.src_style + '**/*.{scss,sass}')
+    return src(gulpConfig.config.path.srcStyles + '**/*.{scss,sass}')
         .pipe(plumber())
         .pipe(sass.sync({
             outputStyle: 'expanded',
@@ -110,7 +110,7 @@ function styles() {
         ]))
         .pipe(concat("app.css"))
         //.pipe(postcss([cssnano({safe: true, autoprefixer: false})]))
-        .pipe(dest(path.tmp + 'styles'))
+        .pipe(dest(gulpConfig.config.path.tmp + 'styles'))
 }
 
 // 插件
@@ -124,7 +124,7 @@ async function vendor() {
         .pipe(plumber())
         .pipe(concat("vendor.js"))
         .pipe(rename({suffix: ".min"}))
-        .pipe(dest(path.dist_assets + 'js'))
+        .pipe(dest(gulpConfig.config.distAssets + 'js'))
 
     // libs
     let assetsList = {
@@ -141,30 +141,30 @@ async function vendor() {
     };
 
     for (var item of assetsList.libs) {
-        await src(item.assets).pipe(dest(path.dist_assets + "libs/" + item.name));
+        await src(item.assets).pipe(dest(gulpConfig.config.distAssets + "libs/" + item.name));
     }
 }
 
 // 压缩
 function compress() {
-    src(path.tmp + 'styles/*.css')
+    src(gulpConfig.config.path.tmp + 'styles/*.css')
         .pipe(plumber())
         .pipe(gulpif(/\.css$/, postcss([cssnano({safe: true, autoprefixer: false})])))
         .pipe(rename({suffix: ".min"}))
-        .pipe(dest(path.dist_assets + 'css'))
+        .pipe(dest(gulpConfig.config.distAssets + 'css'))
 
-    return src(path.tmp + 'scripts/*.js')
+    return src(gulpConfig.config.path.tmp + 'scripts/*.js')
         .pipe(sourcemaps.init())
         .pipe(plumber())
         .pipe(gulpif(/\.js$/, uglify({compress: {drop_console: false}})))
         .pipe(rename({suffix: ".min"}))
         .pipe(sourcemaps.write('.'))
-        .pipe(dest(path.dist_assets + 'js'))
+        .pipe(dest(gulpConfig.config.distAssets + 'js'))
 }
 
 // 清理
 function clean() {
-    return del([path.dist, path.dist_assets, path.tmp])
+    return del([gulpConfig.config.dist, gulpConfig.config.distAssets, gulpConfig.config.path.tmp])
 }
 
 // dev server
@@ -174,7 +174,7 @@ function startAppServer() {
         port: port,
         // proxy: "127.0.0.1:8080"
         server: {
-            baseDir: [path.tmp, path.dist, path.src_page],
+            baseDir: [gulpConfig.config.path.tmp, gulpConfig.config.dist, gulpConfig.config.path.srcPages],
             routes: {
                 '/node_modules': 'node_modules'
             }
@@ -182,12 +182,12 @@ function startAppServer() {
     });
 
     watch([
-        path.src_page + '**/*.html',
-        path.src_image + '**/*',
-        path.src_font + '**/*'
+        gulpConfig.config.path.srcPages + '**/*.html',
+        gulpConfig.config.path.srcImages + '**/*',
+        gulpConfig.config.path.srcFonts + '**/*'
     ]).on('change', browserSync.reload);
-    watch(path.src_style + '**/*.{scss,sass}', styles).on('change', browserSync.reload);
-    watch(path.src_script + '**/*.js', script).on('change', browserSync.reload);
+    watch(gulpConfig.config.path.srcStyles + '**/*.{scss,sass}', styles).on('change', browserSync.reload);
+    watch(gulpConfig.config.path.srcScripts + '**/*.js', script).on('change', browserSync.reload);
 }
 
 // 构建
