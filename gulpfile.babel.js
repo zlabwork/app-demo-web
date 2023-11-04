@@ -1,18 +1,7 @@
-const path = {
-    tmp: '.tmp/',
-    src: 'src/',
-    src_page: 'src/pages/',
-    src_style: 'src/styles/',
-    src_script: 'src/scripts/',
-    src_font: 'src/fonts/',
-    src_image: 'src/images/',
-    dist: 'dist/',
-    dist_assets: 'dist/assets/',
-    dist_page: 'dist/pages/',
-}
+import del from "del";
+import {gulpConfig, pathConfig as path} from "./gulp.config.js"
 
 const {src, dest, watch, series, parallel, lastRun} = require('gulp');
-const del = require('del');
 const browserSync = require('browser-sync').create();
 const htmlmin = require('gulp-htmlmin'); // 压缩html
 const useref = require('gulp-useref');
