@@ -6,8 +6,8 @@
 # node
 node_modules
 package-lock.json
-dist
-.tmp
+/dist
+/.tmp
 /*.lock
 /*lock.yaml
 

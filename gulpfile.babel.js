@@ -21,6 +21,7 @@ const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 // 以下两个一起使用，自动处理浏览器兼容问题
 const postcss = require('gulp-postcss');
+const tailwindcss = require('tailwindcss');
 const autoprefixer = require('autoprefixer');
 
 // Env
@@ -106,6 +107,7 @@ function styles() {
             includePaths: ['.']
         }).on('error', sass.logError))
         .pipe(postcss([
+            tailwindcss(),
             autoprefixer()
         ]))
         .pipe(concat("app.css"))
@@ -166,10 +168,11 @@ function startAppServer() {
     });
 
     watch([
-        gulpConfig.config.path.srcPages + '**/*.html',
+        // gulpConfig.config.path.srcPages + '**/*.html',
         gulpConfig.config.path.srcImages + '**/*',
         gulpConfig.config.path.srcFonts + '**/*'
     ]).on('change', browserSync.reload);
+    watch(gulpConfig.config.path.srcPages + '**/*.html', styles).on('change', browserSync.reload);
     watch(gulpConfig.config.path.srcStyles + '**/*.{scss,sass}', styles).on('change', browserSync.reload);
     watch(gulpConfig.config.path.srcScripts + '**/*.js', script).on('change', browserSync.reload);
 }
