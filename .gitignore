@@ -8,6 +8,8 @@ node_modules
 package-lock.json
 dist
 .tmp
+/*.lock
+/*lock.yaml
 
 ### macOS ###
 # General
