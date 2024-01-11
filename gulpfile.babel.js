@@ -35,7 +35,7 @@ function pages() {
         .pipe(useref({searchPath: [gulpConfig.config.path.tmp, '.']}))
         //.pipe(gulpif(/\.js$/, uglify({compress: {drop_console: true}})))
         //.pipe(gulpif(/\.css$/, postcss([cssnano({safe: true, autoprefixer: false})])))
-        .pipe(gulpif(/\.html$/, htmlmin({
+        .pipe(gulpif(gulpConfig.config.compile.htmlMinify, htmlmin({
             collapseWhitespace: true,
             minifyCSS: true,
             minifyJS: {compress: {drop_console: true}},
@@ -45,20 +45,20 @@ function pages() {
             removeScriptTypeAttributes: true,
             removeStyleLinkTypeAttributes: true
         })))
-        .pipe(dest(gulpConfig.config.distPages));
+        .pipe(dest(gulpConfig.config.path.distPages));
 }
 
 // images
 function images() {
     return src(gulpConfig.config.path.srcImages + '/**/*', {since: lastRun(images)})
         // .pipe($.imagemin())
-        .pipe(dest(gulpConfig.config.dist + '/images'));
+        .pipe(dest(gulpConfig.config.path.dist + '/images'));
 }
 
 // fonts
 function fonts() {
     return src(gulpConfig.config.path.srcFonts + '**/*.{eot,svg,ttf,woff,woff2}')
-        .pipe(dest(gulpConfig.config.dist + '/fonts'));
+        .pipe(dest(gulpConfig.config.path.dist + '/fonts'));
 }
 
 // ES6
@@ -75,11 +75,11 @@ function scriptES6() {
         .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(plumber())
         .pipe(babel())
-        .pipe(dest(gulpConfig.config.dist + '/js'))
+        .pipe(dest(gulpConfig.config.path.dist + '/js'))
         .pipe(rename({suffix: ".min"}))
         .pipe(uglify())
         .pipe(sourcemaps.write('.'))
-        .pipe(dest(gulpConfig.config.dist + '/js'));
+        .pipe(dest(gulpConfig.config.path.dist + '/js'));
 }
 
 // 编译
@@ -117,31 +117,15 @@ function styles() {
 async function vendor() {
 
     // vendor.min.js
-    src([
-        "./node_modules/jquery/dist/jquery.min.js",
-        "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
-    ])
+    src(gulpConfig.config.vendor)
         .pipe(plumber())
         .pipe(concat("vendor.js"))
         .pipe(rename({suffix: ".min"}))
-        .pipe(dest(gulpConfig.config.dist + '/js'))
+        .pipe(dest(gulpConfig.config.path.dist + '/js'))
 
     // libs
-    let assetsList = {
-        libs: [
-            /*{
-                "name": "summernote",
-                "assets": [
-                    "./node_modules/summernote/dist/lang/summernote-zh-CN.min.js",
-                    "./node_modules/summernote/dist/summernote-bs5.min.js",
-                    "./node_modules/summernote/dist/summernote-bs5.css"
-                ]
-            },*/
-        ]
-    };
-
-    for (var item of assetsList.libs) {
-        await src(item.assets).pipe(dest(gulpConfig.config.dist + "/libs/" + item.name));
+    for (var item of gulpConfig.config.libs) {
+        await src(item.assets).pipe(dest(gulpConfig.config.path.dist + "/libs/" + item.name));
     }
 }
 
@@ -149,22 +133,22 @@ async function vendor() {
 function compress() {
     src(gulpConfig.config.path.tmp + 'styles/*.css')
         .pipe(plumber())
-        .pipe(gulpif(/\.css$/, postcss([cssnano({safe: true, autoprefixer: false})])))
+        .pipe(gulpif(/\.css$/ && gulpConfig.config.compile.cssMinify, postcss([cssnano({safe: true, autoprefixer: false})])))
         .pipe(rename({suffix: ".min"}))
-        .pipe(dest(gulpConfig.config.dist + '/css'))
+        .pipe(dest(gulpConfig.config.path.dist + '/css'))
 
     return src(gulpConfig.config.path.tmp + 'scripts/*.js')
         .pipe(sourcemaps.init())
         .pipe(plumber())
-        .pipe(gulpif(/\.js$/, uglify({compress: {drop_console: false}})))
+        .pipe(gulpif(/\.js$/ && gulpConfig.config.compile.jsMinify, uglify({compress: {drop_console: false}})))
         .pipe(rename({suffix: ".min"}))
         .pipe(sourcemaps.write('.'))
-        .pipe(dest(gulpConfig.config.dist + '/js'))
+        .pipe(dest(gulpConfig.config.path.dist + '/js'))
 }
 
 // 清理
 function clean() {
-    return del([gulpConfig.config.dist, gulpConfig.config.distPages, gulpConfig.config.path.tmp])
+    return del([gulpConfig.config.path.dist, gulpConfig.config.path.distPages, gulpConfig.config.path.tmp])
 }
 
 // dev server
@@ -174,7 +158,7 @@ function startAppServer() {
         port: port,
         // proxy: "127.0.0.1:8080"
         server: {
-            baseDir: [gulpConfig.config.path.tmp, gulpConfig.config.dist, gulpConfig.config.path.srcPages],
+            baseDir: [gulpConfig.config.path.tmp, gulpConfig.config.path.dist, gulpConfig.config.path.srcPages],
             routes: {
                 '/node_modules': 'node_modules'
             }

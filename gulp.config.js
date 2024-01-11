@@ -5,8 +5,9 @@ const gulpConfig = {
     config: {
         debug: false,
         compile: {
-            jsMinify: false,
-            cssMinify: false,
+            htmlMinify: false,
+            jsMinify: true,
+            cssMinify: true,
             jsSourcemaps: false,
             cssSourcemaps: false,
         },
@@ -20,9 +21,23 @@ const gulpConfig = {
             srcScripts: "./src/scripts",
             srcPlugins: "./src/plugins",
             node_modules: "./node_modules",
+            dist: "./dist/assets",
+            distPages: "./dist/pages",
         },
-        dist: "./dist/assets",
-        distPages: "./dist/pages",
+        vendor: [
+            "./node_modules/jquery/dist/jquery.min.js",
+            "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+        ],
+        libs: [
+            // {
+            //     "name": "summernote",
+            //     "assets": [
+            //         "./node_modules/summernote/dist/lang/summernote-zh-CN.min.js",
+            //         "./node_modules/summernote/dist/summernote-bs5.min.js",
+            //         "./node_modules/summernote/dist/summernote-bs5.css"
+            //     ]
+            // },
+        ]
     },
 };
 
